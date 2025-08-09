@@ -8,6 +8,7 @@ import { useConvex, useMutation } from 'convex/react'
 import { api } from '@/convex/_generated/api'
 import { toast } from 'sonner'
 import { FileListContext } from '@/app/_context/FilesListContext'
+import { Id } from '@/convex/_generated/dataModel'
 
 function SideNav() {
   const {user}=useKindeBrowserClient();
@@ -21,6 +22,10 @@ function SideNav() {
   },[activeTeam])
   const onFileCreate=(fileName:string)=>{
     console.log(fileName)
+   if (!activeTeam?._id) {
+  console.error("No team selected. Cannot create file.");
+  return;
+}
     createFile({
       fileName:fileName,
       teamId:activeTeam?._id,
@@ -39,11 +44,22 @@ function SideNav() {
     })
   }
   const getFiles=async()=>{
-     const result=await convex.query(api.files.getFiles,{teamId:activeTeam?._id});
-     console.log(result);
-     setFileList_(result);
-     setTotalFiles(result?.length)
+     if (!activeTeam?._id) {
+    console.error("No team selected. Cannot fetch files.");
+    return;
   }
+
+  try {
+      const result = await query(api.files.getFiles, {
+      teamId: activeTeam._id
+      });
+     setFileList_(result);
+     setTotalFiles(result?.length||0)
+  }catch (error) {
+    console.error("Error fetching files:", error);
+  }
+  };
+
   return (
     <div
     className=' h-screen fixed w-72 border-r border-[1px] p-6 flex flex-col'
