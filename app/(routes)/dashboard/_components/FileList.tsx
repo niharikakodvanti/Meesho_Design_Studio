@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useRouter } from 'next/navigation';
+
 export interface FILE{
    archive:boolean,
    createdBy:string,
@@ -23,15 +24,22 @@ export interface FILE{
    _id:string,
    _creationTime:number
 }
+
 function FileList() {
-  const {fileList_,setFileList_}=useContext(FileListContext);
-  const [fileList,setFileList]=useState<any>();
+  const context = useContext(FileListContext);
+  const fileList_ = context?.fileList_ || [];
+  const setFileList_ = context?.setFileList_ || (() => {});
+  const [fileList,setFileList]=useState<FILE[]>([]);
   const {user}:any=useKindeBrowserClient();
   const router=useRouter();
+  
   useEffect(()=>{
-    fileList_&&setFileList(fileList_);
-    console.log(fileList_);
+    if (fileList_) {
+      setFileList(fileList_ as FILE[]);
+      console.log(fileList_);
+    }
   },[fileList_])
+  
   return (
     <div className='mt-10'>
         <div className="overflow-x-auto">
@@ -42,30 +50,42 @@ function FileList() {
         <th className="px-3 py-2 whitespace-nowrap">Created At</th>
         <th className="px-3 py-2 whitespace-nowrap">Edited</th>
         <th className="px-3 py-2 whitespace-nowrap">Author</th>
+        <th className="px-3 py-2 whitespace-nowrap">Actions</th>
       </tr>
     </thead>
 
     <tbody className="divide-y divide-gray-200 *:even:bg-gray-50">
-      {fileList&&fileList.map((file:FILE,index:number)=>(
-        <tr className="*:text-gray-900 *:first:font-medium cursor-pointer"
-        onClick={()=>router.push('/workspace/'+file._id)}
+      {fileList && fileList.map((file:FILE, index:number) => (
+        <tr 
+          key={file._id}
+          className="*:text-gray-900 *:first:font-medium cursor-pointer"
+          onClick={()=>router.push('/workspace/'+file._id)}
         >
         <td className="px-3 py-2 whitespace-nowrap">{file.fileName}</td>
         <td className="px-3 py-2 whitespace-nowrap">{moment(file._creationTime).format('DD MM YYYY')}</td>
         <td className="px-3 py-2 whitespace-nowrap">{moment(file._creationTime).format('DD MM YYYY')}</td>
-        <td className="px-3 py-2 whitespace-nowrap"><Image src={user?.picture}
-        alt='user'
-        width={30}
-        height={30} 
-        className='rounded-full'
-        /></td>
+        <td className="px-3 py-2 whitespace-nowrap">
+          {user?.picture ? (
+            <Image 
+              src={user.picture}
+              alt='user'
+              width={30}
+              height={30} 
+              className='rounded-full'
+            />
+          ) : (
+            <div className='w-[30px] h-[30px] bg-gray-300 rounded-full flex items-center justify-center'>
+              <span className='text-xs text-gray-600'>
+                {user?.given_name?.[0] || user?.email?.[0] || 'U'}
+              </span>
+            </div>
+          )}
+        </td>
         <td className="px-3 py-2 whitespace-nowrap">
         <DropdownMenu>
   <DropdownMenuTrigger><MoreHorizontal/></DropdownMenuTrigger>
   <DropdownMenuContent>
-    
     <DropdownMenuItem className='gap-3'><Archive className='h-4 w-4'/>Archive</DropdownMenuItem>
-   
   </DropdownMenuContent>
 </DropdownMenu>
         </td>
