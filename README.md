@@ -1,36 +1,122 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Eraser Clone
 
-## Getting Started
+A collaborative document and diagram editor built with Next.js, Convex, and Kinde authentication.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- Real-time collaborative editing
+- Document editor with rich text formatting
+- Whiteboard/canvas functionality
+- Team-based file organization
+- User authentication with Kinde
+
+## Tech Stack
+
+- **Frontend**: Next.js 15, React 18, TypeScript
+- **Backend**: Convex (real-time database)
+- **Authentication**: Kinde
+- **Styling**: Tailwind CSS
+- **UI Components**: Radix UI, shadcn/ui
+
+## Environment Variables
+
+You need to set up the following environment variables in your Vercel deployment:
+
+### Kinde Authentication
+```
+KINDE_CLIENT_ID=your_kinde_client_id
+KINDE_CLIENT_SECRET=your_kinde_client_secret
+KINDE_ISSUER_URL=https://your-domain.kinde.com
+KINDE_SITE_URL=https://your-vercel-domain.vercel.app
+KINDE_POST_LOGOUT_REDIRECT_URL=https://your-vercel-domain.vercel.app
+KINDE_POST_LOGIN_REDIRECT_URL=https://your-vercel-domain.vercel.app/dashboard
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Convex
+```
+NEXT_PUBLIC_CONVEX_URL=your_convex_url
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Setup Instructions
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd eraser_clone
+   ```
 
-## Learn More
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+3. **Set up environment variables**
+   - Create a `.env.local` file with the variables listed above
+   - For production, add these to your Vercel environment variables
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+4. **Set up Kinde Authentication**
+   - Go to [Kinde](https://kinde.com) and create a new application
+   - Configure your redirect URLs:
+     - Allowed callback URLs: `https://your-domain.vercel.app/api/auth/kinde_callback`
+     - Allowed logout redirect URLs: `https://your-domain.vercel.app`
+   - Copy the Client ID, Client Secret, and Issuer URL to your environment variables
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+5. **Set up Convex**
+   - Create a new Convex project
+   - Copy the deployment URL to your environment variables
 
-## Deploy on Vercel
+6. **Run the development server**
+   ```bash
+   npm run dev
+   ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Deployment
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. **Deploy to Vercel**
+   - Connect your GitHub repository to Vercel
+   - Add all environment variables in Vercel dashboard
+   - Deploy
+
+2. **Configure Kinde for Production**
+   - Update your Kinde application settings with the production domain
+   - Ensure all redirect URLs are properly configured
+
+## Project Structure
+
+```
+app/
+├── (routes)/
+│   ├── dashboard/          # Dashboard pages
+│   ├── teams/             # Team management
+│   └── workspace/         # Document editor
+├── _components/           # Shared components
+├── _context/             # React contexts
+└── api/                  # API routes
+convex/                   # Convex backend functions
+components/ui/            # UI components
+```
+
+## Common Issues
+
+### Authentication Redirect Issues
+If you see `undefined%2Fdashboard` in the redirect URL:
+1. Check that all Kinde environment variables are set correctly
+2. Ensure the `KINDE_SITE_URL` matches your production domain
+3. Verify redirect URLs are configured in Kinde dashboard
+
+### Build Errors
+If you encounter TypeScript errors during build:
+1. Run `npx tsc --noEmit` to check for type errors
+2. Ensure all dependencies are properly installed
+3. Check that all environment variables are set
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Submit a pull request
+
+## License
+
+MIT License

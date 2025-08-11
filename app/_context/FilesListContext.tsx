@@ -1,4 +1,4 @@
-import { createContext } from "react";
+import { createContext, Dispatch, SetStateAction } from "react";
 
 export interface FileItem {
   _id: string;
@@ -12,7 +12,7 @@ export interface FileItem {
 
 interface FileListContextType {
   fileList_: FileItem[];
-  setFileList_: (files: FileItem[]) => void;
+  setFileList_: Dispatch<SetStateAction<FileItem[]>>;
 }
 
 export const FileListContext = createContext<FileListContextType | undefined>(undefined);

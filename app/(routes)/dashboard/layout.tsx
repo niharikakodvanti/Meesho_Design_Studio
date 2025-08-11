@@ -3,7 +3,7 @@ import { api } from '@/convex/_generated/api';
 import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs';
 import { useConvex } from 'convex/react';
 import { useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import SideNav from './_components/SideNav';
 import { FileListContext, FileItem } from '@/app/_context/FilesListContext';
 
@@ -38,10 +38,12 @@ function DashboardLayout(
             console.error('Error checking team:', error);
         }
     }
+
+    const contextValue = useMemo(() => ({ fileList_, setFileList_ }), [fileList_]);
     
   return (
     <div>
-      <FileListContext.Provider value={{fileList_,setFileList_}}>
+      <FileListContext.Provider value={contextValue}>
       <div className='grid grid-cols-4'>
         <div className='h-screen w-72 fixed'>
           <SideNav/>
